@@ -7,18 +7,24 @@ import Navi from "./Navi";
 import Products from "./Products";
 export default class App extends Component {
   state = { currentCategory: "", products: [] };
-  componentDidMount() {
-    this.getProducts();
-  }
 
   changeCategory = (category) => {
     this.setState({ currentCategory: category.categoryName });
+    this.getProducts(category.id);
   };
-  getProducts = () => {
-    fetch("http://localhost:3000/products")
+  componentDidMount() {
+    this.getProducts();
+  }
+  getProducts = categoryId => {
+    let url="http://localhost:3000/products";
+    if(categoryId){
+      url+="?categoryId="+categoryId;
+    }
+    fetch(url)
       .then((response) => response.json())
       .then((data) => this.setState({ products: data }));
   };
+
   render() {
     let ProductInfo = { title: "Product List" };
     let CategoryInfo = { title: "Category List" };
@@ -33,14 +39,14 @@ export default class App extends Component {
               <Categories
                 currentCategory={this.state.currentCategory}
                 changeCategory={this.changeCategory}
-                info={ProductInfo}
+                info={CategoryInfo}
               />
             </Col>
             <Col xs="8">
               <Products
-                product={this.state.products}
+                products={this.state.products}
                 currentCategory={this.state.currentCategory}
-                info={CategoryInfo}
+                info={ProductInfo}
               />
             </Col>
           </Row>
